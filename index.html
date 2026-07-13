@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display KML on Map</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    
+    <style>
+        /* Map container must have a explicit height */
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+    
+    <label for="holeDropdown">Choose a hole:</label>
+    <select id="holeDropdown">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+    </select>
+    
+    <script>
+        // 1. Initialize the map and set default view coordinates and zoom level
+        const map = L.map('map').setView([0, 0], 2);
+        
+        const dropdown = document.getElementById('holeDropdown');
+
+        // 1. On page load: check for a saved value and apply it
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedValue = localStorage.getItem('selectedDropdownValue');
+            if (savedValue) {
+                dropdown.value = savedValue;
+            }
+        });
+
+        // 2. On change: save the new selected value
+        dropdown.addEventListener('change', (event) => {
+            localStorage.setItem('selectedDropdownValue', event.target.value);
+        });
+        
+        const holeDropdownValue = localStorage.getItem('selectedDropdownValue');;
+
+        // 2. Load open-source street map tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // show the scale bar on the lower left corner
+        L.control.scale().addTo(map);
+
+        // 3. Load and parse the KML file dynamically
+        // Replace 'path/to/your/file.kml' with your actual KML URL or file path
+        // const kmlLayer = omnivore.kml('/Users/jamesb91/Desktop/Projects/App Building/test_map/BaseballField.kml')
+//             .on('ready', function() {
+//                 // Automatically zoom and adjust map bounds to show the KML data
+//                 map.fitBounds(kmlLayer.getBounds());
+//             })
+//             .on('error', function(e) {
+//                 console.error('Failed to load or parse the KML file:', e);
+//             })
+//             .addTo(map);
+        
+//         fetch('Hole_1_Green.kml')
+        fetch('BaseballField_' + holeDropdownValue + '.kml')
+            .then(res => res.text())
+            .then(kmltext => {
+                // Create new kml overlay
+                const track = new omnivore.kml.parse(kmltext);
+                map.addLayer(track);
+
+                // Adjust map to show the kml
+                const bounds = track.getBounds();
+                map.fitBounds(bounds);
+                
+                // 2. Get the geographic center of that box
+                var center = bounds.getCenter();
+    
+                // 3. Extract latitude and longitude
+                var lat = center.lat;
+                var lng = center.lng;
+        
+                // 2. Define your target destination point
+                let targetPoint = L.latLng(lat, lng); // Example: New York City
+                L.marker(targetPoint).addTo(map).bindPopup("Target Destination").openPopup();
+                
+                // 3. Request the user's current location
+                map.locate({ setView: true, maxZoom: 16 });
+        
+                map.on('locationfound', function(e) {
+                    const myLocation = e.latlng; // User's location as an L.LatLng object
+
+                    // Add a marker for the user
+                    L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
+            
+                    // Calculate straight-line distance in meters
+                    const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
+            
+                    alert(`You are ${distanceInYards} yards away from the target destination!`);
+                });
+
+            }).catch((e) => {
+              console.log(e);
+            })
+                
+        
+        // 5. Handle geolocation errors (e.g., permission denied)
+        map.on('locationerror', function(e) {
+            alert("Could not access your location: " + e.message);
+        });
+    </script>
+</body>
+</html>
