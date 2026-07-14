@@ -52,7 +52,8 @@
             <option value="17">17</option>
             <option value="18">18</option>
         </select>
-        <span class="right-text">Your text goes here</span>
+        <span class="right-text">Yardage to Center: </span>
+        <span id="yardage" class="right-text"></span>
     </div>
 
     <!-- Map container -->
@@ -129,7 +130,9 @@
                     // Calculate straight-line distance in meters
                     const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
             
-                    alert(`You are ${distanceInYards} yards away from the target destination!`);
+                    //alert(`You are ${distanceInYards} yards away from the target destination!`);
+
+                    document.getElementById("yardage").textContent = distanceInYards;
                 });
 
                 // Handle geolocation errors (e.g., permission denied)
