@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display KML on Map</title>
+    <title>TBNLI Yardage Book</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -23,9 +23,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Map container -->
-    <div id="map"></div>
     
     <label for="holeDropdown">Choose a hole:</label>
     <select id="holeDropdown">
@@ -48,14 +45,17 @@
         <option value="17">17</option>
         <option value="18">18</option>
     </select>
+
+    <!-- Map container -->
+    <div id="map"></div>
     
     <script>
-        // 1. Initialize the map and set default view coordinates and zoom level
+        // Initialize the map and set default view coordinates and zoom level
         const map = L.map('map').setView([0, 0], 2);
         
         const dropdown = document.getElementById('holeDropdown');
 
-        // 1. On page load: check for a saved value and apply it
+        // On page load: check for a saved value and apply it
         window.addEventListener('DOMContentLoaded', () => {
             const savedValue = localStorage.getItem('selectedDropdownValue');
             if (savedValue) {
@@ -63,14 +63,15 @@
             }
         });
 
-        // 2. On change: save the new selected value
+        // On change: save the new selected value
         dropdown.addEventListener('change', (event) => {
             localStorage.setItem('selectedDropdownValue', event.target.value);
+            location.reload(); 
         });
         
         const holeDropdownValue = localStorage.getItem('selectedDropdownValue');;
 
-        // 2. Load open-source street map tiles
+        // Load open-source street map tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
@@ -78,19 +79,7 @@
         // show the scale bar on the lower left corner
         L.control.scale().addTo(map);
 
-        // 3. Load and parse the KML file dynamically
-        // Replace 'path/to/your/file.kml' with your actual KML URL or file path
-        // const kmlLayer = omnivore.kml('/Users/jamesb91/Desktop/Projects/App Building/test_map/BaseballField.kml')
-//             .on('ready', function() {
-//                 // Automatically zoom and adjust map bounds to show the KML data
-//                 map.fitBounds(kmlLayer.getBounds());
-//             })
-//             .on('error', function(e) {
-//                 console.error('Failed to load or parse the KML file:', e);
-//             })
-//             .addTo(map);
-        
-//         fetch('Hole_1_Green.kml')
+        // Fetch the map kml file and load it to the map and calculate the distances
         fetch('BaseballField_' + holeDropdownValue + '.kml')
             .then(res => res.text())
             .then(kmltext => {
