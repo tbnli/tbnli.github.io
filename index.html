@@ -20,31 +20,40 @@
             width: 100%;
             height: 600px;
         }
+
+        .dropdown-container {
+            display: flex;         /* Places items side-by-side */
+            align-items: center;   /* Perfectly centers the text vertically with the dropdown */
+            gap: 10px;             /* Adds clean spacing between the dropdown and the text */
+        }
     </style>
 </head>
 <body>
-    
-    <label for="holeDropdown">Choose a hole:</label>
-    <select id="holeDropdown">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-    </select>
+
+    <div class="dropdown-container">
+        <label for="holeDropdown">Choose a hole:</label>
+        <select id="holeDropdown">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+        </select>
+        <span class="right-text">Your text goes here</span>
+    </div>
 
     <!-- Map container -->
     <div id="map"></div>
