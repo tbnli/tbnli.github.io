@@ -91,18 +91,18 @@
                 const bounds = track.getBounds();
                 map.fitBounds(bounds);
                 
-                // 2. Get the geographic center of that box
+                // Get the geographic center of that box
                 var center = bounds.getCenter();
     
-                // 3. Extract latitude and longitude
+                // Extract latitude and longitude
                 var lat = center.lat;
                 var lng = center.lng;
         
-                // 2. Define your target destination point
+                // Define your target destination point
                 let targetPoint = L.latLng(lat, lng); // Example: New York City
                 L.marker(targetPoint).addTo(map).bindPopup("Target Destination").openPopup();
                 
-                // 3. Request the user's current location
+                // Request the user's current location
                 map.locate({ 
                     setView: true, 
                     maxZoom: 16 
@@ -123,15 +123,15 @@
                     alert(`You are ${distanceInYards} yards away from the target destination!`);
                 });
 
+                // Handle geolocation errors (e.g., permission denied)
+                map.on('locationerror', function(e) {
+                    alert("Could not access your location: " + e.message);
+                });
+
             }).catch((e) => {
               console.log(e);
             })
                 
-        
-        // 5. Handle geolocation errors (e.g., permission denied)
-        map.on('locationerror', function(e) {
-            alert("Could not access your location: " + e.message);
-        });
     </script>
 </body>
 </html>
