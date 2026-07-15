@@ -107,7 +107,9 @@
                 // Extract latitude and longitude
                 var lat = center.lat;
                 var lng = center.lng;
-        
+
+                getElevation(lat, long);
+                
                 // Define your target destination point
                 let targetPoint = L.latLng(lat, lng); // Example: New York City
                 L.marker(targetPoint).addTo(map).bindPopup("Target Destination").openPopup();
@@ -143,6 +145,24 @@
             }).catch((e) => {
               console.log(e);
             })
+
+        function getElevation(lat, long) {
+            const url = "https://epqs.nationalmap.gov/v1/json?x=" + long + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // or response.text() if it's not JSON
+                })
+                .then(data => {
+                    console.log(data.value);
+                 })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
                 
     </script>
 </body>
