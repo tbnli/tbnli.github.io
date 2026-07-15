@@ -110,7 +110,9 @@
                 var lat = center.lat;
                 var lng = center.lng;
 
-                let targetElevation = getElevation(lat, lng);
+                let targetElevation = async () => {
+                    let jsonData = await activitiesActions.getElevation(lat, lng);
+                }
                 
                 // Define your target destination point
                 let targetPoint = L.latLng(lat, lng); // Example: New York City
@@ -131,8 +133,10 @@
                     const myLng = myLocation.lng;
 
                     // Calculate Elevation difference from current to target location
-                    const currentElevation = getElevation(myLat, myLng);
-                    const elevationInYards = (targetElevation - currentElevation) / 3;
+                    const currentElevation = async () => {
+                        const jsonData = await activitiesActions.getElevation(myLat, myLng);
+                    }
+                    const elevationInYards = (targetElevation.value - currentElevation.value) / 3;
                     
                     // Add a marker for the user
                     L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
@@ -166,7 +170,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    return data.value; // console.log(data.value);
+                    return data; // console.log(data.value);
                  })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
