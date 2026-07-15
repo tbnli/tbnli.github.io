@@ -125,8 +125,8 @@
         
                 map.on('locationfound', function(e) {
                     const myLocation = e.latlng; // User's location as an L.LatLng object
-                    const myLat = myLocation.lat();
-                    const myLng = myLocation.lng();
+                    const myLat = myLocation.lat;
+                    const myLng = myLocation.lng;
 
                     getElevation(myLat, myLng);
                     
