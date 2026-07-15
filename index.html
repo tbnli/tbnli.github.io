@@ -54,6 +54,8 @@
         </select>
         <span class="right-text">Yardage to Center: </span>
         <span id="yardage" class="right-text"></span>
+        <span class="right-text">Yards Elevation: </span>
+        <span id="elevation" class="right-text"></span>
     </div>
 
     <!-- Map container -->
@@ -108,7 +110,7 @@
                 var lat = center.lat;
                 var lng = center.lng;
 
-                getElevation(lat, lng);
+                let targetElevation = getElevation(lat, lng);
                 
                 // Define your target destination point
                 let targetPoint = L.latLng(lat, lng); // Example: New York City
@@ -128,7 +130,9 @@
                     const myLat = myLocation.lat;
                     const myLng = myLocation.lng;
 
-                    getElevation(myLat, myLng);
+                    // Calculate Elevation difference from current to target location
+                    const currentElevation = getElevation(myLat, myLng);
+                    const elevationInYards = (targetElevation - currentElevation)/3;
                     
                     // Add a marker for the user
                     L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
@@ -139,6 +143,7 @@
                     //alert(`You are ${distanceInYards} yards away from the target destination!`);
 
                     document.getElementById("yardage").textContent = distanceInYards;
+                    document.getElementById("elevation").textContent = elevationInYards;
                 });
 
                 // Handle geolocation errors (e.g., permission denied)
@@ -161,7 +166,7 @@
                     return response.json(); // or response.text() if it's not JSON
                 })
                 .then(data => {
-                    console.log(data.value);
+                    return data.value; // console.log(data.value);
                  })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
