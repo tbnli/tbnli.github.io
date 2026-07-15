@@ -92,7 +92,7 @@
         L.control.scale().addTo(map);
 
         // Fetch the map kml file and load it to the map and calculate the distances
-        fetch('BaseballField_' + holeDropdownValue + '.kml')
+        fetch('./Greens/Hole_' + holeDropdownValue + '_Green.kml')
             .then(res => res.text())
             .then(kmltext => {
                 // Create new kml overlay
@@ -101,7 +101,7 @@
 
                 // Adjust map to show the kml
                 const bounds = track.getBounds();
-                map.fitBounds(bounds);
+                // map.fitBounds(bounds);
                 
                 // Get the geographic center of that box
                 var center = bounds.getCenter();
@@ -124,9 +124,13 @@
                 });
         
                 map.on('locationfound', function(e) {
-                    const myLocation = e.latlng; // User's location as an L.LatLng object
-                    const myLat = myLocation.lat;
-                    const myLng = myLocation.lng;
+                    // const myLocation = e.latlng; // User's location as an L.LatLng object
+                    // const myLat = myLocation.lat;
+                    // const myLng = myLocation.lng;
+                    // FOR TEST (uncomment above for prod) - Olde Beau Clubhouse: 36.413360, -80.981225
+                    const myLat = "36.413360";
+                    const myLng = "-80.981225";
+                    const myLocation = L.latLng(myLat, myLng);
 
                     // Generate elevation for start and end points
                     // Note: The fetch commands return promises which are asynchronous
@@ -177,6 +181,10 @@
             
                     //alert(`You are ${distanceInYards} yards away from the target destination!`);
                     document.getElementById("yardage").textContent = distanceInYards;
+
+                    // Zoom to fit our location and target
+                    const bounds = L.latLngBounds([targetPoint, myLocation]);
+                    map.fitBounds(bounds);
                 });
 
                 // Handle geolocation errors (e.g., permission denied)
