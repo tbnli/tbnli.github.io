@@ -132,7 +132,7 @@
 
                     // Calculate Elevation difference from current to target location
                     const currentElevation = getElevation(myLat, myLng);
-                    const elevationInYards = (targetElevation - currentElevation)/3;
+                    const elevationInYards = (targetElevation - currentElevation) / 3;
                     
                     // Add a marker for the user
                     L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
@@ -158,12 +158,12 @@
         function getElevation(lat, long) {
             const url = "https://epqs.nationalmap.gov/v1/json?x=" + long + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
 
-            fetch(url)
+            return fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json(); // or response.text() if it's not JSON
+                    return response.json();
                 })
                 .then(data => {
                     return data.value; // console.log(data.value);
