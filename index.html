@@ -109,10 +109,6 @@
                 // Extract latitude and longitude
                 var lat = center.lat;
                 var lng = center.lng;
-
-                let targetElevation = async () => {
-                    let jsonData = await activitiesActions.getElevation(lat, lng);
-                }
                 
                 // Define your target destination point
                 let targetPoint = L.latLng(lat, lng); // Example: New York City
@@ -132,11 +128,46 @@
                     const myLat = myLocation.lat;
                     const myLng = myLocation.lng;
 
-                    // Calculate Elevation difference from current to target location
-                    const currentElevation = async () => {
-                        const jsonData = await activitiesActions.getElevation(myLat, myLng);
-                    }
-                    const elevationInYards = (targetElevation.value - currentElevation.value) / 3;
+                    // Generate elevation for start and end points
+                    // Note: The fetch commands return promises which are asynchronous
+                    // Thus they neet to run together to actually use the return values.
+                    var startElevation;
+                    var endElevation;
+                    const startUrl = "https://epqs.nationalmap.gov/v1/json?x=" + myLng + "&y=" + myLat + "&units=Feet&wkid=4326&includeDate=False"; 
+                    const endUrl = "https://epqs.nationalmap.gov/v1/json?x=" + lng + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
+                    
+                    fetch(startUrl)
+                        .then(startResponse => {
+                            if (!startResponse.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return startResponse.json();
+                        })
+                        .then(startData => {
+                            startElevation = startData.value;
+                            console.log(startElevation);
+                            
+                            fetch(endUrl)
+                                .then(endResponse => {
+                                    if (!endResponse.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return endResponse.json();
+                                })
+                                .then(endData => {
+                                    endElevation = endData.value;
+                                    console.log(endElevation)
+                                    const elevationInYards = (endElevation - startElevation) / 3;
+                                    console.log(elevationInYards);
+                                    document.getElementById("elevation").textContent = elevationInYards;
+                                })
+                                .catch(error => {
+                                    console.error('There was a problem with the fetch operation:', error);
+                                });
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
                     
                     // Add a marker for the user
                     L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
@@ -145,9 +176,7 @@
                     const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
             
                     //alert(`You are ${distanceInYards} yards away from the target destination!`);
-
                     document.getElementById("yardage").textContent = distanceInYards;
-                    document.getElementById("elevation").textContent = elevationInYards;
                 });
 
                 // Handle geolocation errors (e.g., permission denied)
@@ -158,24 +187,6 @@
             }).catch((e) => {
               console.log(e);
             })
-
-        function getElevation(lat, long) {
-            const url = "https://epqs.nationalmap.gov/v1/json?x=" + long + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
-
-            return fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    return data; // console.log(data.value);
-                 })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
-        }
                 
     </script>
 </body>
