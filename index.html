@@ -124,67 +124,75 @@
                 });
         
                 map.on('locationfound', function(e) {
-                    // const myLocation = e.latlng; // User's location as an L.LatLng object
-                    // const myLat = myLocation.lat;
-                    // const myLng = myLocation.lng;
-                    // FOR TEST (uncomment above for prod) - Olde Beau Clubhouse: 36.413360, -80.981225
-                    const myLat = "36.413360";
-                    const myLng = "-80.981225";
-                    const myLocation = L.latLng(myLat, myLng);
+                    // Logic to set location to clubhouse if outside of 20 Miles (32186.9 meters)
+                    let myLocation = e.latlng; // User's location as an L.LatLng object
+                    let myLat;
+                    let myLng;
+                    if (myLocation.distanceTo(targetPoint) < 32187) {
+                        myLat = myLocation.lat;
+                        myLng = myLocation.lng;
+                    } else {
+                        // Olde Beau Clubhouse for testing: 36.413360, -80.981225
+                        myLat = "36.413360";
+                        myLng = "-80.981225";
+                        myLocation = L.latLng(myLat, myLng);
+                    }
 
-                    // Generate elevation for start and end points
-                    // Note: The fetch commands return promises which are asynchronous
-                    // Thus they neet to run together to actually use the return values.
-                    var startElevation;
-                    var endElevation;
-                    const startUrl = "https://epqs.nationalmap.gov/v1/json?x=" + myLng + "&y=" + myLat + "&units=Feet&wkid=4326&includeDate=False"; 
-                    const endUrl = "https://epqs.nationalmap.gov/v1/json?x=" + lng + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
-                    
-                    fetch(startUrl)
-                        .then(startResponse => {
-                            if (!startResponse.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return startResponse.json();
-                        })
-                        .then(startData => {
-                            startElevation = startData.value;
-                            console.log(startElevation);
-                            
-                            fetch(endUrl)
-                                .then(endResponse => {
-                                    if (!endResponse.ok) {
-                                        throw new Error('Network response was not ok');
-                                    }
-                                    return endResponse.json();
-                                })
-                                .then(endData => {
-                                    endElevation = endData.value;
-                                    console.log(endElevation)
-                                    const elevationInYards = (endElevation - startElevation) / 3;
-                                    console.log(elevationInYards);
-                                    document.getElementById("elevation").textContent = elevationInYards.toFixed(1); // rounding to first decimal
-                                })
-                                .catch(error => {
-                                    console.error('There was a problem with the fetch operation:', error);
-                                });
-                        })
-                        .catch(error => {
-                            console.error('There was a problem with the fetch operation:', error);
-                        });
-                    
-                    // Add a marker for the user
-                    L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
-            
-                    // Calculate straight-line distance in meters
-                    const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
-            
-                    //alert(`You are ${distanceInYards} yards away from the target destination!`);
-                    document.getElementById("yardage").textContent = distanceInYards.toFixed(1);
-
-                    // Zoom to fit our location and target
-                    const bounds = L.latLngBounds([targetPoint, myLocation]);
-                    map.fitBounds(bounds);
+                    if (myLat && myLng) {
+                        // Generate elevation for start and end points
+                        // Note: The fetch commands return promises which are asynchronous
+                        // Thus they neet to run together to actually use the return values.
+                        var startElevation;
+                        var endElevation;
+                        const startUrl = "https://epqs.nationalmap.gov/v1/json?x=" + myLng + "&y=" + myLat + "&units=Feet&wkid=4326&includeDate=False"; 
+                        const endUrl = "https://epqs.nationalmap.gov/v1/json?x=" + lng + "&y=" + lat + "&units=Feet&wkid=4326&includeDate=False"; 
+                        
+                        fetch(startUrl)
+                            .then(startResponse => {
+                                if (!startResponse.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return startResponse.json();
+                            })
+                            .then(startData => {
+                                startElevation = startData.value;
+                                console.log(startElevation);
+                                
+                                fetch(endUrl)
+                                    .then(endResponse => {
+                                        if (!endResponse.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return endResponse.json();
+                                    })
+                                    .then(endData => {
+                                        endElevation = endData.value;
+                                        console.log(endElevation)
+                                        const elevationInYards = (endElevation - startElevation) / 3;
+                                        console.log(elevationInYards);
+                                        document.getElementById("elevation").textContent = elevationInYards.toFixed(1); // rounding to first decimal
+                                    })
+                                    .catch(error => {
+                                        console.error('There was a problem with the fetch operation:', error);
+                                    });
+                            })
+                            .catch(error => {
+                                console.error('There was a problem with the fetch operation:', error);
+                            });
+                        
+                        // Add a marker for the user
+                        L.marker(myLocation).addTo(map).bindPopup("You are here").openPopup();
+                
+                        // Calculate straight-line distance in meters
+                        const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
+                
+                        //alert(`You are ${distanceInYards} yards away from the target destination!`);
+                        document.getElementById("yardage").textContent = distanceInYards.toFixed(1);
+    
+                        // Zoom to fit our location and target
+                        const bounds = L.latLngBounds([targetPoint, myLocation]);
+                        map.fitBounds(bounds);
+                    }
                 });
 
                 // Handle geolocation errors (e.g., permission denied)
