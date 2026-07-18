@@ -163,7 +163,7 @@
                                     console.log(endElevation)
                                     const elevationInYards = (endElevation - startElevation) / 3;
                                     console.log(elevationInYards);
-                                    document.getElementById("elevation").textContent = elevationInYards;
+                                    document.getElementById("elevation").textContent = elevationInYards.toFixed(1); // rounding to first decimal
                                 })
                                 .catch(error => {
                                     console.error('There was a problem with the fetch operation:', error);
@@ -180,7 +180,7 @@
                     const distanceInYards = myLocation.distanceTo(targetPoint) * 1.094;
             
                     //alert(`You are ${distanceInYards} yards away from the target destination!`);
-                    document.getElementById("yardage").textContent = distanceInYards;
+                    document.getElementById("yardage").textContent = distanceInYards.toFixed(1);
 
                     // Zoom to fit our location and target
                     const bounds = L.latLngBounds([targetPoint, myLocation]);
